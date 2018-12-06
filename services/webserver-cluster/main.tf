@@ -1,6 +1,3 @@
-terraform {
-  required_version = ">= 0.8, < 0.9"
-}
 
 resource "aws_launch_configuration" "example" {
   image_id        = "ami-40d28157"
@@ -18,8 +15,6 @@ data "template_file" "user_data" {
 
   vars {
     server_port = "${var.server_port}"
-    db_address  = "${data.terraform_remote_state.db.address}"
-    db_port     = "${data.terraform_remote_state.db.port}"
   }
 }
 
@@ -102,14 +97,4 @@ resource "aws_security_group_rule" "allow_all_outbound" {
   to_port     = 0
   protocol    = "-1"
   cidr_blocks = ["0.0.0.0/0"]
-}
-
-data "terraform_remote_state" "db" {
-  backend = "s3"
-
-  config {
-    bucket = "${var.db_remote_state_bucket}"
-    key    = "${var.db_remote_state_key}"
-    region = "us-east-1"
-  }
 }
